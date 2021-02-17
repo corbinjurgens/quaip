@@ -1,0 +1,36 @@
+{
+    "name": "corbinjurgens/quaip",
+    "description": "Database and Sessions for UA and IP",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Corbin Jurgens",
+            "email": "corbinjurgens@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+		"ua-parser/uap-php": "~3.9",
+		"stevebauman/location": "~6.1",
+		"grimzy/laravel-mysql-spatial": "^4.0"
+	},
+    "autoload": {
+        "psr-4": {
+            "Corbinjurgens\\Quaip\\": "src/"
+        },
+        "files": [
+        ]
+    },
+	"extra": {
+    "laravel": {
+        "providers": [
+            "Corbinjurgens\\Quaip\\ServiceProvider"
+        ],
+		"aliases":
+		{
+			"Quaip": "Corbinjurgens\\Quaip\\Quaip"
+		}
+    }
+}
+}
