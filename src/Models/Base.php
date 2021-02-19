@@ -32,7 +32,7 @@ class Base extends Model
 			$result['using'] = @$using['name'];
 			
 			$using_version = @$using['version'];
-			$result['using_version'] = $family_version;
+			$result['using_version'] = $using_version;
 			if (is_array($using_version)){
 				$result['using_version'] = @$using_version['value'];
 				$result['using_version_alias'] = @$using_version['alias'];
