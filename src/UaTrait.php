@@ -53,4 +53,13 @@ trait UaTrait {
             'ua_os_id' // Local key on the Ua table...
         );
    }
+   
+   
+   // noBots
+   public function scopeNoBots($query){
+	   $query->whereDoesntHave('ua_device', function($query){
+			$query->where('type', 'bot');
+			
+		});
+   }
 }
