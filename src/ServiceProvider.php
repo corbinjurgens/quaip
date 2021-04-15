@@ -10,6 +10,7 @@ class ServiceProvider extends BaseServiceProvider
 {
 	
 	static $name = 'quaip';
+	
     /**
      * Register services.
      *
@@ -24,7 +25,6 @@ class ServiceProvider extends BaseServiceProvider
 		);
 		
 		
-		//$this->app->bind(self::$name, QHistory::class);
 		
 		$this->app->bind(self::$name, QuaipContainer::class);
 		
