@@ -24,6 +24,15 @@ Add alias to config/app.php alias
 "Quaip" => Corbinjurgens\Quaip\Facade::class,
 ```
 
+## Requires
+composer packages
+doctrine/dbal
+whichbrowser/parser -- unless you change ua parser
+stevebauman/location and geoip2/geoip2 -- unless you change ip parser
+	php artisan vendor:publish --provider="Stevebauman\Location\LocationServiceProvider"
+grimzy/laravel-mysql-spatial:^5.0 -- for ip coordinates
+
+
 ## Usage
 The middleware is automatically added to web group
 
