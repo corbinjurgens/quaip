@@ -26,7 +26,7 @@ class ServiceProvider extends BaseServiceProvider
 		
 		
 		
-		$this->app->bind(self::$name, QuaipContainer::class);
+		$this->app->singleton(self::$name, QuaipContainer::class);
 		
 		$router = $this->app->make(Router::class);
 		$router->pushMiddlewareToGroup('web', Location::class);

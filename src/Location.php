@@ -15,6 +15,8 @@ use Corbinjurgens\Quaip\Models\UaOs;
 use Corbinjurgens\Quaip\Models\UaDevice;
 use Corbinjurgens\Quaip\Models\UaBrowser;
 
+use Illuminate\Database\Eloquent\Model;
+
 use Quaip;
 
 
@@ -50,17 +52,18 @@ class Location
 		
 		if ($ip){
 			// No session 
-			if (!$request->session()->has($this->ip_key)){
-				$this->init_ip();
+			$ip_session = null;
+			if ($request->hasSession() && !$request->session()->has($this->ip_key)){
+				$ip_session = $this->init_ip();
 			}else{
 				// Has session, has ip. Check if its still the same
-				$ip_session = $request->session()->get($this->ip_key);
-				if ($ip_session && $ip !== $ip_session['ip']){
-					$this->init_ip();
+				$ip_session = $request->hasSession() ? $request->session()->get($this->ip_key) : null;
+				if (($ip_session && $ip !== $ip_session['ip']) || is_null($ip_session)){
+					$ip_session = $this->init_ip();
 				}
 			}
 			
-			$this->load_ip();
+			$this->load_ip($ip_session);
 		}
 		
 		
@@ -69,31 +72,37 @@ class Location
 		
 		if ($ua){
 			// No session 
-			if (!$request->session()->has($this->ua_key)){
-				$this->init_ua();
+			$ua_session = null;
+			if ($request->hasSession() && !$request->session()->has($this->ua_key)){
+				$ua_session = $this->init_ua();
 			}else{
 				// Has session, has ua. Check if its still the same
-				$ua_session = $request->session()->get($this->ua_key);
-				if ($ua_session && $ip !== $ua_session['ua']){
-					$this->init_ua();
+				$ua_session = $request->hasSession() ? $request->session()->get($this->ua_key) : null;
+				if (($ua_session && $ip !== $ua_session['ua']) || is_null($ua_session)){
+					$ua_session = $this->init_ua();
 				}
 			}
-			$this->load_ua();
+			$this->load_ua($ua_session);
 		}
-		
-		
         return $next($request);
     }
 	
 	function init_ip(){
 		$data = ProcessIp::get();
 		$database = (new Ip())->find_or_build($data);
-		request()->session()->put($this->ip_key, $database ? $database->getAttributes() + ['ip' => $data['ip']] : null);	
+		if (request()->hasSession()){
+			$result = $database ? $database->getAttributes() + ['ip' => $data['ip']] : null;
+			request()->session()->put($this->ip_key, $result);	
+		}
+		
 		return $database;
 	}
 	
-	function load_ip(){
-		$data = request()->session()->get($this->ip_key);
+	function load_ip($data){
+		if ($data instanceof Model){
+			Quaip::set('ip', $data );
+			return $data;
+		}
 		unset($data['ip']);
 		$model = Ip::hydrate([$data])->first();
 		Quaip::set('ip', $model );
@@ -107,42 +116,43 @@ class Location
 		$ua = ProcessUa::fetch();
 		$data = ProcessUa::get();
 		$database = (new Ua())->build_ua($ua, $data);
-		request()->session()->put($this->ua_key, $database['ua'] ? $database['ua']->getAttributes() : ['ua' => $ua, 'id' => null]);
-		
-		foreach($this->ua_list as $ua_key => $ua_list){
-			request()->session()->put($this->{$ua_key . '_key'}, $database[$ua_key] ? $database[$ua_key]->getAttributes() : null);
+
+		if (request()->hasSession()){
+			request()->session()->put($this->ua_key, $database['ua'] ? $database['ua']->getAttributes() : ['ua' => $ua, 'id' => null]);
+			foreach($this->ua_list as $ua_key => $ua_list){
+				request()->session()->put($this->{$ua_key . '_key'}, $database[$ua_key] ? $database[$ua_key]->getAttributes() : null);
+			}
 		}
-		
 		return $database;
 	}
 	
-	function load_ua(){
+	function load_ua($all_data){
 		foreach($this->ua_list as $ua_key => $ua_list){
-			$data = request()->session()->get($this->{$ua_key . '_key'});
+			$data = $all_data[$ua_key];
 			if ($data){
-				$$ua_key = $ua_list::hydrate([$data])->first();
+				$$ua_key = $data instanceof Model ? $data : $ua_list::hydrate([$data])->first();
 				Quaip::set($ua_key, $$ua_key );
 			}
 		}
 		
 		
-		$data = request()->session()->get($this->ua_key);
+		$data = $all_data[$this->ua_key];
 		$ua = null;
 		if (!empty($data['id'])){
-			$ua = (new Ua)->forceFill($data);
-			$ua->exists = true;
-			
-			foreach($this->ua_list as $ua_key => $ua_list){
-				if (isset($$ua_key)){
-					$relation = substr($ua_key, 3);
-					$ua->setRelation($relation, $$ua_key);
+			$ua = $data instanceof Model ? $data : Ua::hydrate([$data])->first();
+			if (!$data instanceof Model){
+				
+				foreach($this->ua_list as $ua_key => $ua_list){
+					if (isset($$ua_key)){
+						$relation = substr($ua_key, 3);
+						$ua->setRelation($relation, $$ua_key);
+					}
+					
+					
 				}
-				
-				
 			}
 			Quaip::set('ua', $ua );
 		}
-		//$model = (new Ip)->newInstance($data, true);// doesn't add id
 		return $ua;
 	}
 	

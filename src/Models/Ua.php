@@ -41,6 +41,11 @@ class Ua extends Base
 			'ua' => $ua_string
 			
 		]);
+		
+		$ua->setRelation('browser', $ua_browser);
+		$ua->setRelation('device', $ua_device);
+		$ua->setRelation('os', $ua_os);
+		
 		return compact('ua_browser', 'ua_device', 'ua_os', 'ua');
 		
 	}
