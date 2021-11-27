@@ -27,9 +27,6 @@ class ServiceProvider extends BaseServiceProvider
 		
 		
 		$this->app->singleton(self::$name, QuaipContainer::class);
-		
-		$router = $this->app->make(Router::class);
-		$router->pushMiddlewareToGroup('web', Location::class);
     }
 
     /**
@@ -39,6 +36,9 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function boot()
     {
+		$router = $this->app->make(Router::class);
+		$router->pushMiddlewareToGroup('web', Location::class);
+
 		$this->loadMigrationsFrom(__DIR__.'/database/migrations');
 			$this->publishes([
 				__DIR__.'/database/migrations' => database_path('migrations'),
