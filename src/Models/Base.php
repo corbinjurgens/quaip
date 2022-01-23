@@ -1,7 +1,9 @@
 <?php
 
 namespace Corbinjurgens\Quaip\Models;
+
 use Illuminate\Database\Eloquent\Model;
+
 class Base extends Model
 {
 	
@@ -16,7 +18,7 @@ class Base extends Model
 	 * @return array
 	 */
 	function find_array(array $array, array $find = null){
-		if ( is_null($find) ) $find = config('quaip.'. $this->getTable() . '.column_find');
+		$find = $find ?? config('quaip.'. $this->getTable() . '.column_find');
 		return array_replace($find,  array_intersect_key($array, $find) );
 	}
 	

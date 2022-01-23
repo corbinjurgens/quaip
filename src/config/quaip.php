@@ -1,40 +1,24 @@
 <?php
 return [
+
+	// Actions to take on Middleware, use part of the class name, eg Corbinjurgens\Quaip\Actions\{Ua}\...
+	// Will also make theese items be accessible from the Facade, eg, Quaip::ip();
+	'loader' => [
+		'Ua',
+		'Ip'
+	],
+
+	// map the default classes to a custom class here
+	'actions' => [
+		//\Corbinjurgens\Quaip\Actions\Ip\Fetch::class => \Your\Custom\Ip\Fetcher::class
+	],
+
 	/**
-	 * Within each table, yuou can set 
-	 * 'allowed_columns' as index array, set null or do not set to allow all
-	 * 'columnn_keys' as assoc array to match the incoming key to a different database key
+	 * Within each table, yuou can set
 	 * 'column_find' to set columns used for where and their defaults, also useful for correct ordering to ensure compound index work
+	 * This is only used for the default FindOrCreate Actions. 
 	 */
-	 
-	 
-	 
 	'ips' => [
-		/**
-		 * What keys from GetIP::get()->toArray() you will save to database
-		 */
-		'allowed_columns' => [
-			'ip', 
-			'countryCode',
-			//'regionCode',
-			//'regionName',
-			//'cityName,'
-			//'zipCode',
-			//'isoCode',
-			//'postalCode',
-			'latitude',
-			'longitude',
-			//'metroCode',
-			//'areaCode'
-		],
-		
-		/**
-		 * Customize if the keys from GetIP::get() equate to different column names in the database
-		 */
-		'columnn_keys' => [
-			'countryCode' => 'country_code',
-		],
-		
 		/**
 		 * The columns used for find, and default value (so as to ensure you get the correct result with null if key is not provided)
 		 */

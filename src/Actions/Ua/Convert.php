@@ -1,53 +1,31 @@
 <?php
 
-namespace Corbinjurgens\Quaip\Concerns;
+namespace Corbinjurgens\Quaip\Actions\Ua;
 
-use Closure;
-use Illuminate\Http\Request;
+use Corbinjurgens\Quaip\Actions\Interfaces;
 
-use WhichBrowser\Parser;
-
-use Corbinjurgens\Quaip\QuaipContainer;
-
-
-class ProcessUa extends Contracts\Ua
+class Convert implements Interfaces\Convert
 {
 	/**
-	 * Take result of get, whether a ip or null, and parse it with GeoIP
-	 * to get info
+	 * Convert result of Lookup to a format to easily search table
 	 *
-	 * @param string|null $ip_address
-	 *
-	 * @return mixed
-	 */
-	protected static function lookup($ua = null){
-		if ($closure = QuaipContainer::getCustomUaLookup()){
-			return $closure($ua);
-		}
-		$user_agent = new Parser($ua);
-		return $user_agent ? $user_agent->toArray() : [];
-	}
-	
-	/**
-	 * Take the result of GeoIP or other ip tool and return the desired array or value
-	 * For your database or other use. Or just return as is
-	 *
-	 * @param mixed $ip_address
+	 * @param array $data
 	 *
 	 * @return array
 	 */
-	protected static function process($data = null){
-		$ua_browser = static::prepare($data['browser'] ?? [], 'ua_browsers');
-		$ua_device = static::prepare($data['device'] ?? [], 'ua_devices');
-		$ua_os = static::prepare($data['os'] ?? [], 'ua_os');
+	public static function convert(array $data) : array {
+		$ua_browser = $data['browser'] ?? [];
+		$ua_device = $data['device'] ?? [];
+		$ua_os = $data['os'] ?? [];
 		
 		return [
 			'browser' => static::flatten($ua_browser),
 			'device' => static::flatten($ua_device),
-			'os' => static::flatten($ua_os)
+			'os' => static::flatten($ua_os),
+			'ua' => $data['ua'] ?? null
 		];
 	}
-	
+
 	/**
 	 * When using the default lookup, it will come as multidimensional array
 	 * This needs to be flattended for database
@@ -97,5 +75,4 @@ class ProcessUa extends Contracts\Ua
 		
 		return $data;
 	}
-	
 }
