@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 interface FindOrCreate
 {
 	
-	public static function findOrCreate(array $data) : Model;
+	public static function action(array $data) : Model;
 }

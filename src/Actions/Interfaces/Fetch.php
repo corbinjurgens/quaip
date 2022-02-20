@@ -5,5 +5,5 @@ namespace Corbinjurgens\Quaip\Actions\Interfaces;
 interface Fetch
 {
 	
-	public static function fetch();
+	public static function action();
 }

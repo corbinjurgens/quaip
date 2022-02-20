@@ -1,17 +1,26 @@
 <?php
 return [
 
-	// Actions to take on Middleware, use part of the class name, eg Corbinjurgens\Quaip\Actions\{Ua}\...
-	// Will also make theese items be accessible from the Facade, eg, Quaip::ip();
+	// Things to load on Middleware
+	// Will search for each action in the actions array or use part of the class name, eg Corbinjurgens\Quaip\Actions\{Loader}\...
+	// Will also make these items be accessible from the Facade, eg, Quaip::ip();
 	'loader' => [
 		'Ua',
 		'Ip'
 	],
 
-	// map the default classes to a custom class here
+	// Loader actions are Convert, Fetch, Find, FindOrCreate, Lookup
+	// Map the default classes to a custom class here, or provide location of classes that are outside of Ua and Ip
+	// point to it by providing string loader\action eg "Ip\\Fetch"
+	// Anything not found in this list, will look to \Corbinjurgens\Quaip\Actions\ for example, \Corbinjurgens\Quaip\Actions\Ip\Fetch::class
+	// Point to a location for all actions of a loader by adding just the loader name, eg 'Ip' => "Your\\Custom\\Ip" and it will look to Your\Custom\Ip\Fetch::class and other action names
 	'actions' => [
-		//\Corbinjurgens\Quaip\Actions\Ip\Fetch::class => \Your\Custom\Ip\Fetcher::class
+		//"Ip\\Fetch" => \Your\Custom\Ip\Fetcher::class
 	],
+
+	//--------
+	// Everything below is used by default actions
+	//--------
 
 	/**
 	 * Within each table, yuou can set

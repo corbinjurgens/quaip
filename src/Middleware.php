@@ -32,8 +32,7 @@ class Middleware
 		//$request->session()->forget($this->ua_key);
 		foreach(config('quaip.loader', []) as $load){
 			$session_key = "quaip_" . strtolower($load);
-			$class_base = "Corbinjurgens\\Quaip\\Actions\\$load\\";
-			$fetch = QuaipContainer::fetchClass($class_base . 'Fetch')::fetch();
+			$fetch = QuaipContainer::fetchClass($load, 'Fetch')::action();
 			if (is_null($fetch) || $fetch === ""){
 				continue;
 			}
@@ -41,13 +40,14 @@ class Middleware
 			$session = null;
 			
 			if ($this->requiresSession($request, $fetch, $session_key, $session)){
-				$data = QuaipContainer::fetchClass($class_base . 'Lookup')::lookup($fetch);
-				$prepare = QuaipContainer::fetchClass($class_base . 'Convert')::convert($data);
-				$model = QuaipContainer::fetchClass($class_base . 'FindOrCreate')::findOrCreate($prepare);
+				$data = QuaipContainer::fetchClass($load, 'Lookup')::action($fetch);
+				$prepare = QuaipContainer::fetchClass($load, 'Convert')::action($data);
+				$model = QuaipContainer::fetchClass($load, 'FindOrCreate')::action($prepare);
 				$session = $this->createSession($request, $fetch, $session_key, $model);
 				
 			}
-			$result  = $session['instance'] ?? QuaipContainer::fetchClass($class_base . 'Find')::find($session['key']);
+			// Eager loading
+			$result = $session['instance'] ?? QuaipContainer::fetchClass($load, 'Find')::action($session['key']);
 			Quaip::set($load, $result);
 
 		}

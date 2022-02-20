@@ -16,7 +16,7 @@ class Lookup implements Interfaces\Lookup
 	 *
 	 * @return array
 	 */
-	public static function lookup(string $ua = null) : array{
+	public static function action(string $ua = null) : array{
 		$user_agent = new Parser($ua);
 		return $user_agent ? ($user_agent->toArray() + ['ua' => $ua]) : [];
 	}

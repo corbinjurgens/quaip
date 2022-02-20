@@ -21,7 +21,7 @@ class FindOrCreate implements Interfaces\FindOrCreate
 	 *
 	 * @return array
 	 */
-	public static function findOrCreate(array $data) : Model
+	public static function action(array $data) : Model
 	{
 		
 		$ua_browser = !empty($data['browser']) ? (new UaBrowser())->find_or_build($data['browser']) : null;

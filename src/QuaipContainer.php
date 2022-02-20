@@ -20,10 +20,16 @@ class QuaipContainer
 	}
 
 	/**
-	 * Convert default class to custom class if it exists
+	 * Convert default class to custom class if it exists, or look for locaation of custom classes
 	 */
-	public static function fetchClass(string $class){
+	public static function fetchClass(string $loader, string $action){
 		$mapping = config('quaip.actions', []);
-		return $mapping[$class] ?? $class;
+		if (isset($mapping[$loader . '\\' . $action])){
+			return $mapping[$loader . '\\' . $action];
+		}
+		if (isset($mapping[$loader])){
+			return $mapping[$loader] . "\\" . $action;
+		}
+		return "Corbinjurgens\\Quaip\\Actions\\$loader\\$action";
 	}
 }

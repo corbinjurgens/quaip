@@ -18,7 +18,7 @@ class FindOrCreate implements Interfaces\FindOrCreate
 	 *
 	 * @return array
 	 */
-	public static function findOrCreate(array $data) : Model
+	public static function action(array $data) : Model
 	{
 		
 		return (new Ip())->find_or_build($data);

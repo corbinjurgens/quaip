@@ -13,7 +13,7 @@ class Convert implements Interfaces\Convert
 	 *
 	 * @return array
 	 */
-	public static function convert(array $data) : array {
+	public static function action(array $data) : array {
 		$ua_browser = $data['browser'] ?? [];
 		$ua_device = $data['device'] ?? [];
 		$ua_os = $data['os'] ?? [];

@@ -23,6 +23,9 @@ class Ip extends Base
 	protected $spatialFields = [
         'coordinates',
     ];
+	protected $hidden = [
+		'ip_binary'
+	];
 	
 	// https://github.com/phayes/geoPHP/blob/master/lib/adapters/WKB.class.php
 	// https://github.com/grimzy/laravel-mysql-spatial

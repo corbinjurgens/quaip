@@ -11,7 +11,7 @@ class Fetch implements Interfaces\Fetch
 	 *
 	 * @return string
 	 */
-	public static function fetch()
+	public static function action()
 	{
 		return request()->server('HTTP_USER_AGENT');
 	}

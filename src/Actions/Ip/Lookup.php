@@ -16,7 +16,7 @@ class Lookup implements Interfaces\Lookup
 	 *
 	 * @return array
 	 */
-	public static function lookup(string $ip_address = null) : array
+	public static function action(string $ip_address = null) : array
 	{
 		$location = Location::get($ip_address);
 		return $location ? $location->toArray() : ['ip' => $ip_address];

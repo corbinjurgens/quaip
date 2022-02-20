@@ -13,7 +13,7 @@ class Convert implements Interfaces\Convert
 	 *
 	 * @return array
 	 */
-	public static function convert(array $data) : array{
+	public static function action(array $data) : array{
 		return [
 			'ip' => $data['ip'],
 			'country_code' => $data['countryCode'] ?? null,
