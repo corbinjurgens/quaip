@@ -17,7 +17,7 @@ class Find implements Interfaces\Find
 	 *
 	 * @return Model
 	 */
-	public static function action($key) : Model
+	public static function action($key) : ?Model
 	{
 		
 		return Ip::find($key);

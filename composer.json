@@ -10,10 +10,12 @@
         }
     ],
     "minimum-stability": "dev",
+    "suggest": {
+        "stevebauman/location": ">=4.0.1 Required if using the default Ip loaders",
+        "grimzy/laravel-mysql-spatial": "^4.0, ^3.0, ^2.0, or ^1.0 depending on your Laravel and Mysql version. Required if using the default Ip Model for langitude/longitude coordinates",
+        "whichbrowser/parser": ">=2.0.18 Required if using the default User-Agent loaders"
+    },
     "require": {
-		"ua-parser/uap-php": "~3.9",
-		"stevebauman/location": "~6.1",
-		"grimzy/laravel-mysql-spatial": "^4.0"
 	},
     "autoload": {
         "psr-4": {
@@ -29,7 +31,7 @@
         ],
 		"aliases":
 		{
-			"Quaip": "Corbinjurgens\\Quaip\\Quaip"
+			"Quaip": "Corbinjurgens\\Quaip\\QuaipContainer"
 		}
     }
 }

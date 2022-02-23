@@ -42,7 +42,6 @@ class Base extends Model
 		$create = new $this();
 		$create->forceFill($processed_data);
 		
-		
 		$create->save();
 		return $this::find($create->id);
 	}

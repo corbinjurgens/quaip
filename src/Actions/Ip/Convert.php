@@ -17,8 +17,7 @@ class Convert implements Interfaces\Convert
 		return [
 			'ip' => $data['ip'],
 			'country_code' => $data['countryCode'] ?? null,
-			'latitude' => $data['latitude'] ?? null,
-			'longitude' => $data['longitude'] ?? null,
+			'coordinates' => isset($data['latitude']) && isset($data['longitude']) ? [$data['latitude'], $data['longitude']] : null
 		];
 	}
 }

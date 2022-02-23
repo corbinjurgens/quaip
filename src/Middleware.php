@@ -25,13 +25,14 @@ class Middleware
      * @return mixed
      */
 	
-    public function handle(Request $request, Closure $next)
-    {
-		
-		//$request->session()->forget($this->ip_key);
-		//$request->session()->forget($this->ua_key);
-		foreach(config('quaip.loader', []) as $load){
+    public function handle(Request $request, Closure $next, ...$loader){
+		foreach($loader ?: config('quaip.loader', []) as $load){
 			$session_key = "quaip_" . strtolower($load);
+
+			// clear
+			//$request->session()->forget($session_key);
+			//continue;
+
 			$fetch = QuaipContainer::fetchClass($load, 'Fetch')::action();
 			if (is_null($fetch) || $fetch === ""){
 				continue;
@@ -44,12 +45,15 @@ class Middleware
 				$prepare = QuaipContainer::fetchClass($load, 'Convert')::action($data);
 				$model = QuaipContainer::fetchClass($load, 'FindOrCreate')::action($prepare);
 				$session = $this->createSession($request, $fetch, $session_key, $model);
-				
 			}
-			// Eager loading
-			$result = $session['instance'] ?? QuaipContainer::fetchClass($load, 'Find')::action($session['key']);
-			Quaip::set($load, $result);
 
+			// Lazy loading
+			Quaip::setKey($load, $session['key']);
+
+			// Already recieved Model instance on creation so set it to prevent an extra query
+			if (isset($session['instance'])){
+				Quaip::set($load, $session['instance']);
+			}
 		}
 		
         return $next($request);

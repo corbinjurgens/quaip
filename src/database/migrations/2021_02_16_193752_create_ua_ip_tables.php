@@ -16,13 +16,8 @@ class CreateUaIpTables extends Migration
     {
 		Schema::create('ips', function (Blueprint $table) {
 			$table->id();
-			//$table->timestamps();
 			$table->string('country_code', 2)->nullable()->index();
-			//$table->decimal('latitude', 10, 8)->nullable();
-			//$table->decimal('longitude', 11, 8)->nullable();
 			$table->point('coordinates')->nullable();
-			
-			//$table->spatialIndex('coordinates'); // only works if not nullable
 		});
 		DB::statement('ALTER TABLE `ips` ADD `ip_binary` VARBINARY(16)');
 		
@@ -34,7 +29,6 @@ class CreateUaIpTables extends Migration
 		
 		Schema::create('ua_browsers', function (Blueprint $table) {
 			$table->id();
-			//$table->timestamps();
 			$table->string('name')->nullable();
 			$table->string('alias')->nullable();
 			
@@ -69,7 +63,6 @@ class CreateUaIpTables extends Migration
 		});
 		Schema::create('ua_devices', function (Blueprint $table) {
 			$table->id();
-			//$table->timestamps();
 			$table->string('type')->nullable()->index();
 			$table->string('subtype')->nullable();
 			
@@ -91,7 +84,6 @@ class CreateUaIpTables extends Migration
 		});
 		Schema::create('ua_os', function (Blueprint $table) {
 			$table->id();
-			//$table->timestamps();
 			$table->string('name')->nullable();
 
 			$table->string('family')->nullable();
@@ -120,18 +112,27 @@ class CreateUaIpTables extends Migration
 		
 		Schema::create('uas', function (Blueprint $table) {
 			$table->id();
-			//$table->timestamps();
-			$table->foreignId('ua_browser_id')
-				->constrained('ua_browsers')
-				->onDelete('cascade')
+			$table->unsignedBigInteger('ua_browser_id')
+				->nullable();
+			$table->unsignedBigInteger('ua_device_id')
+				->nullable();
+			$table->unsignedBigInteger('ua_os_id')
+				->nullable();
+			
+			$table->foreign('ua_browser_id')
+				->references('id')
+				->on('ua_browsers')
+				->onDelete('set null')
 				;
-			$table->foreignId('ua_device_id')
-				->constrained('ua_devices')
-				->onDelete('cascade')
+			$table->foreign('ua_device_id')
+				->references('id')
+				->on('ua_devices')
+				->onDelete('set null')
 				;
-			$table->foreignId('ua_os_id')
-				->constrained('ua_os')
-				->onDelete('cascade')
+			$table->foreign('ua_os_id')
+				->references('id')
+				->on('ua_os')
+				->onDelete('set null')
 				;
 				
 			$table->index(['ua_browser_id', 'ua_device_id', 'ua_os_id']);

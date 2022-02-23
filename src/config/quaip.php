@@ -20,6 +20,7 @@ return [
 
 	//--------
 	// Everything below is used by default actions
+	// "column_find" also affects the created database indexes
 	//--------
 
 	/**

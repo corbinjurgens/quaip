@@ -7,6 +7,7 @@ use Grimzy\LaravelMysqlSpatial\Types\Point;
 class Ip extends Base
 {
 	use SpatialTrait;
+
     /**
      * The attributes that are not mass assignable.
      *
@@ -50,71 +51,38 @@ class Ip extends Base
 	// ip
 	public function getIpAttribute(){
 		return $this->to_ip($this->ip_binary);
-		
 	}
+	
 	// ip
 	public function setIpAttribute($ip){
 		$this->attributes['ip_binary'] = $this->from_ip($ip);
 	}
-	// INET6_ATON
+
+	// Human readable IP to store INET6_ATON
 	public function from_ip($ip){
 		return inet_pton($ip);
 	}
 	
-	// INET6_NTOA
+	// Stored IP to human readable INET6_NTOA
 	public function to_ip($binary){
 		$l = strlen($binary);
 		if ($l == 4 or $l == 16) {
 			return inet_ntop(pack('A' . $l, $binary));
 		}
-		return null;
-		
+		return null;	
 	}
-	
-	
 	
 	// latitude
 	public function getLatitudeAttribute(){
 		return $this->get_lat_lon('lat');
-		
 	}
+
 	// longitude
 	public function getLongitudeAttribute(){
 		return $this->get_lat_lon('lon');
-		
 	}
-	// latitude
-	public function setLatitudeAttribute($value){
-		$this->set_lat_lon('lat', $value);
-		//dd($this);
-		$this->refresh_coordinates();
-	}
-	// longitude
-	public function setLongitudeAttribute($value){
-		$this->set_lat_lon('lon', $value);
-		$this->refresh_coordinates();
-	}
-	
-	// coordinates
-	public function setCoordinatesAttribute(Point $value = null){
-		
-		$this->attributes['coordinates'] = $value;
-		$this->lat = null;
-		$this->lon = null;
-	}
-	
-	
-	
-	public $lat = null;
-	public $lon = null;
-	
-	function get_lat_lon($key){
-		if (!is_null($this->{$key})){
-			return $this->{$key};
-		}
-		//$coordinates = $this->getOriginal('coordinates');
-		
-		
+
+	public function get_lat_lon($key){
 		$coordinates = $this->coordinates;
 		if ($coordinates instanceof Point){
 			switch($key){
@@ -129,78 +97,14 @@ class Ip extends Base
 		return null;
 	}
 	
-	function set_lat_lon($key, $value){
-		$this->{$key} = $value;
-		
-	}
-	
-	function refresh_coordinates(){
-		$lat = $this->get_lat_lon('lat');
-		$lon = $this->get_lat_lon('lon');
-		if ($lat && $lon){
-			//$coordinates = $this->from_lat_lon($lat, $lon);
-			//dd($coordinates);
-			//$this->attributes['coordinates'] = $coordinates;
-			$this->attributes['coordinates'] = new Point($lat, $lon);
-		}else{
-			$this->attributes['coordinates'] = null;
+	// coordinates
+	public function setCoordinatesAttribute($value = null){
+		if (is_array($value)){
+			$value = new Point($value[0], $value[1]);
+		}else if (isset($value) && ($value instanceof Point) == false){
+			throw new \Exception("Must set using a " . Point::class . " class, or array of [latitude, longitude]");
 		}
+		$this->attributes['coordinates'] = $value;
 	}
-	
-	
-	public function to_lat_lon($data){
-		if (is_null($data) || $data === ''){
-			return null;
-		}
-		//dd($this->coordinates);
-		//echo "---- ";print_r($data);
-		//$wb = new \WKB();
-		//dd( $wb->read($data, true) );
-		
-		//dd( \geoPHP::load(bin2hex($data),'wkb') );
-		return unpack('x/x/x/x/corder/Ltype/dlat/dlon', $data);
-	}
-	
-	
-	public function from_lat_lon($lat, $lon){
-		if (!($lon) || !($lat)){
-			return null;
-		}
-		/*
-		$old_wkb = pack('c',1);
-		$old_wkb .= pack('L',1);
-		$old_wkb .= pack('dd',floatval($lat), floatval($lon));
-		
-		$old = pack('xxxxcLdd', '0', 1, (float) $lat, (float) $lon);
-		*/
-		
-		
-		$point = $polygon = \geoPHP::load(
-			sprintf('POINT(%s %s)', $lat, $lon)
-		,'wkt');
-		
-		$wkb_reader = new \WKB();
-		$wkb = $wkb_reader->write($point);
-		return $wkb;
-		
-		
-		//return \DB::raw(sprintf('POINT(%s, %s)', $lat, $lon));
-		
-		
-		
-	}
-	/*
-	static function booted(){
-		static::saving(function($model){
-			if (!is_null($model->coordinates)){
-				//$model->coordinates = \DB::raw("0x".bin2hex($model->coordinates));
-				$model->coordinates = \DB::raw("ST_GEOMFROMWKB('".($model->coordinates)."')");
-			}
-dd($model);
-		});
-		
-	}
-	*/
-	
 	
 }
