@@ -6,7 +6,7 @@ use Illuminate\Support\Str;
 
 /**
  * Get and set a loaded item based on its name as in config quaip.loader
- * Be sure to use the correct capitalization
+ * Be sure to use the correct capitalization, eg ::Ua() or ::get('Ua')
  */
 class QuaipContainer
 {
